@@ -1,3 +1,6 @@
+# Michael Ruocco
+# This class creates a splash screen when the program boots up and opens the settings menu after x amount of time.
+
 import tkinter as tk
 from tkinter import PhotoImage
 
@@ -32,12 +35,13 @@ def open_main_window():
     y = (screen_height - window_height) // 2
     root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
+
     # Run main menu
     root.mainloop()
 
 
 # delay for splash screen
-splash.after(3000, open_main_window)
+splash.after(3000, open_main_window())
 
 # Run splash screen
 splash.mainloop()
