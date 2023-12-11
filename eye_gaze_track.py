@@ -1,3 +1,4 @@
+"""Michael Ruocco, class for gaze and eye tracking using mediapipe"""
 import cv2
 import pyautogui
 import mediapipe as mp
@@ -8,20 +9,18 @@ def map_value(value, from_range, to_range):
     from_min, from_max = from_range
     to_min, to_max = to_range
 
-    # Ensure the value is within the input range
     value = max(min(value, from_max), from_min)
 
-    # Perform linear interpolation
     mapped_value = (value - from_min) / (from_max - from_min) * (to_max - to_min) + to_min
 
     return int(mapped_value)
 
 
+"""create video and face points"""
 cam = cv2.VideoCapture(0)
 face_mesh = mp.solutions.face_mesh.FaceMesh(refine_landmarks=True)
 screen_w, screen_h = pyautogui.size()
 
-# Calibration loop
 calibration_points = []
 
 left_cal_dif = 0
@@ -35,7 +34,8 @@ bridge_enabled = False
 x_sens = 90
 y_sens = 55
 
-for _ in range(1):  # You can adjust the number of calibration frames
+"""calibration captures single frame, can be adjusted later"""
+for _ in range(1):
     _, frame = cam.read()
     frame = cv2.flip(frame, 1)
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -56,6 +56,7 @@ for _ in range(1):  # You can adjust the number of calibration frames
         cal_w_b = screen_w / frame_w * int(landmarks[168].x * frame_w)
         cal_h_b = screen_h / frame_h * int(landmarks[168].y * frame_h)
 
+"""main loop"""
 while True:
     _, frame = cam.read()
     frame = cv2.flip(frame, 1)
@@ -68,6 +69,7 @@ while True:
     if landmark_points:
         landmarks = landmark_points[0].landmark
 
+        """using nose bridge for gaze"""
         if bridge_enabled:
             landmark = landmarks[168]
             x = int(float(landmark.x * frame_w))
@@ -82,6 +84,7 @@ while True:
             y_move = map_value(screen_y, (y_low, y_high), (1, screen_h - 1))
             pyautogui.moveTo(x_move, y_move)
 
+        """using iris for gaze"""
         if gaze_enabled:
             for iris_id, landmark in enumerate(landmarks[474:478]):
                 x = int(landmark.x * frame_w)
@@ -98,12 +101,14 @@ while True:
                     y_move = map_value(screen_y, (y_low, y_high), (1, screen_h - 1))
                     pyautogui.moveTo(x_move, y_move)
 
+        """left wink"""
         left = [landmarks[145], landmarks[159]]
         for landmark in left:
             x = int(landmark.x * frame_w)
             y = int(landmark.y * frame_h)
             cv2.circle(frame, (x, y), 3, (0, 255, 255))
 
+        """right wink"""
         right = [landmarks[374], landmarks[386]]
         for landmark in right:
             x = int(landmark.x * frame_w)
@@ -115,6 +120,7 @@ while True:
         left_closed = left_dif < left_cal_dif / 2
         right_closed = right_dif < right_cal_dif / 2
 
+        """"to prevent reading of blinks as winks"""
         if not (left_closed and right_closed):
             if left_dif < 0.004:
                 pyautogui.leftClick()
@@ -126,6 +132,7 @@ while True:
 
     cv2.imshow('EyeControlled Mouse', frame)
     key = cv2.waitKey(1) & 0xFF
+    """q to quit"""
     if key == ord('q'):
         break
     """press 'space' to toggle gaze tracking"""
@@ -133,11 +140,11 @@ while True:
         gaze_enabled = not gaze_enabled
         x_sens = 90
         y_sens = 55
+    """press m to toggle bridge tracking"""
     if key == ord('m'):
         bridge_enabled = not bridge_enabled
         x_sens = 300
         y_sens = 150
 
-# Release the camera and close all OpenCV windows
 cam.release()
 cv2.destroyAllWindows()

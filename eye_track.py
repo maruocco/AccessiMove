@@ -1,23 +1,12 @@
-# Michael Ruocco
-# This class is for eye position detection to determine when a user blinks/winks
-# and translate that into a right/left click
-
 import cv2
 import dlib
 import numpy as np
 from math import hypot
 import matplotlib.pyplot as plt
 import pyautogui
-
-# Start video capture from default camera
-cap = cv2.VideoCapture(0)
-
-# Create face detector
-face_detector = dlib.get_frontal_face_detector()
-shape_predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+import mediapipe as mp
 
 
-# Returns midpoint between two points
 def midpoint(p1, p2):
     return int((p1.x + p2.x) / 2), int((p1.y + p2.y) / 2)
 
@@ -38,10 +27,21 @@ def calculate_ratio(left, right, top_l, top_r, bottom_l, bottom_r):
     return hor_line_length / ver_line_length
 
 
-# Temporary for display
+def display_calibration_text(i, state):
+    cv2.putText(frame, f"Calibrating: {state}. Frame {i + 1}", (50, 150), font, 1, (255, 0, 0), 4)
+
+
+# Video capture setup
+cap = cv2.VideoCapture(0)
+face_mesh = mp.solutions.face_mesh.FaceMesh(refine_landmarks=True)
+screen_w, screen_h = pyautogui.size()
+face_detector = dlib.get_frontal_face_detector()
+shape_predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+
+# Font for displaying text on frames
 font = cv2.FONT_HERSHEY_SIMPLEX
 
-# Parameters for calibration
+# Calibration parameters
 calibration_frames = 200
 calibration_data = []
 
@@ -51,33 +51,24 @@ for i in range(calibration_frames):
     frame = cv2.resize(frame, (1280, 720))
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
+    # Display calibration text based on current calibration phase
     if i < 50:
-        # Both eyes open calibration
-        cv2.putText(frame, "Calibrating: Both eyes open. Frame {}".format(i + 1), (50, 150), font, 1, (255, 0, 0),
-                    4)
+        display_calibration_text(i, "Both eyes open")
     elif 50 <= i < 100:
-        # Left eye open calibration
-        cv2.putText(frame, "Calibrating: Right eye open. Frame {}".format(i + 1), (50, 150), font, 1, (255, 0, 0),
-                    4)
+        display_calibration_text(i, "Right eye open")
     elif 100 <= i < 150:
-        # Right eye open calibration
-        cv2.putText(frame, "Calibrating: Left eye open. Frame {}".format(i + 1), (50, 150), font, 1, (255, 0, 0), 4)
+        display_calibration_text(i, "Left eye open")
     else:
-        # Both eyes closed calibration
-        cv2.putText(frame, "Calibrating: Both eyes closed. Frame {}".format(i + 1), (50, 150), font, 1, (255, 0, 0),
-                    4)
+        display_calibration_text(i, "Both eyes closed")
 
     faces = face_detector(gray)
     for face in faces:
         landmarks = shape_predictor(gray, face)
-
         r_ratio = calculate_ratio(36, 39, 37, 38, 41, 40)
         l_ratio = calculate_ratio(42, 45, 43, 44, 47, 46)
-
-        # Store eye aspect ratios in the calibration data
         calibration_data.append((l_ratio, r_ratio))
 
-    # Show camera window
+    # Show calibration window
     cv2.imshow("Calibration", frame)
     cv2.waitKey(1)
 
@@ -247,14 +238,14 @@ while True:
                     current_state = 1
                     # cv2.putText(frame, "LEFT WINK", (50, 150), font, 3, (0, 255, 0), 4)
                     detected = True
-                    # pyautogui.leftClick()
+                    pyautogui.leftClick()
                 elif (l_r_wink_ratio_min <= l_ratio <= l_r_wink_ratio_max) and (
                         r_r_wink_ratio_min <= r_ratio <= r_r_wink_ratio_max) and r_ratio > l_ratio:
                     r_wink_count += 1
                     current_state = 2
                     # cv2.putText(frame, "RIGHT WINK", (50, 150), font, 3, (0, 0, 255), 4)
                     detected = True
-                    # pyautogui.rightClick()
+                    pyautogui.rightClick()
             elif (l_blink_ratio_min <= l_ratio <= l_blink_ratio_max) and (
                     r_blink_ratio_min <= r_ratio <= r_blink_ratio_max):
                 blink_count += 1
@@ -265,7 +256,7 @@ while True:
     max_state = max(blink_count, l_wink_count, r_wink_count, open_count)
 
     frame_count += 1
-    if frame_count >= 5:
+    if frame_count >= 4:
         detected = False
         frame_count = 0
 
@@ -285,6 +276,24 @@ while True:
     cv2.putText(frame, disp_text, (50, 150), font, 3, (0, 255, 0), 4)
     # Temporary to show camera on screen
     cv2.imshow("Frame", frame)
+
+    frame = cv2.flip(frame, 1)
+    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    output = face_mesh.process(rgb_frame)
+    landmark_points = output.multi_face_landmarks
+
+    frame_h, frame_w, _ = frame.shape
+
+    if landmark_points:
+        landmarks = landmark_points[0].landmark
+        for id, landmark in enumerate(landmarks[474:478]):
+            x = int(landmark.x * frame_w)
+            y = int(landmark.y * frame_h)
+            cv2.circle(frame, (x, y), 3, (0, 255, 0))
+            if id == 1:
+                screen_x = screen_w / frame_w * x
+                screen_y = screen_h / frame_h * y
+                pyautogui.moveTo(screen_x, screen_y)
 
     key = cv2.waitKey(1)
     if key == 27:
