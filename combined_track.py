@@ -1,5 +1,5 @@
 # Jack Duggan, Michael Ruocco
-# This program uses Mediapipe and cv2 libraries to capture head and eye gestures from users and convert them into their respective inputs
+# This program uses Mediapipe and cv2 libraries to capture head and eye gestures from users and convert them into their respective inputs.
 
 import pyautogui
 import mediapipe as mp  # Import mediapipe
