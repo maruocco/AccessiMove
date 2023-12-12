@@ -70,7 +70,7 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
         ret, frame = cap.read()
 
         """START GAZE TRACK"""
-        if (gaze_enabled):
+        if gaze_enabled:
             frame = cv2.flip(frame, 1)
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             output = face_mesh.process(rgb_frame)
@@ -193,19 +193,19 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                 if left_distance < 0.15:
                     tilt = True
                     print("Left head tilt is", tilt)
-                    # autopy.key.tap(autopy.key.Code.LEFT_ARROW, delay = 0.5)
+                    pyautogui.press('left')
                 elif right_distance < 0.15:
                     tilt = True
                     print("Right head tilt is", tilt)
-                    # autopy.key.tap(autopy.key.Code.RIGHT_ARROW, delay = 0.5)
+                    pyautogui.press('right')
                 elif nod_distance > 0.35:
                     tilt = True
                     # print("Up head tilt is", tilt)
-                    # autopy.key.tap(autopy.key.Code.UP_ARROW, delay = 0.5)
+                    # pyautogui.press('up')
                 elif nod_distance < 0.15:
                     tilt = True
                     print("Down head tilt is", tilt)
-                    # autopy.key.tap(autopy.key.Code.DOWN_ARROW, delay = 0.5)
+                    pyautogui.press('down')
                 # else:
                     # print("No head tilt")
 
