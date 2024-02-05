@@ -29,10 +29,10 @@ cal_w_i = 0
 cal_h_i = 0
 cal_w_b = 0
 cal_h_b = 0
-gaze_enabled = True
-bridge_enabled = False
-x_sens = 90
-y_sens = 55
+gaze_enabled = False
+bridge_enabled = True
+x_sens = 300
+y_sens = 150
 
 """calibration captures single frame, can be adjusted later"""
 for _ in range(1):
@@ -72,8 +72,8 @@ while True:
         """using nose bridge for gaze"""
         if bridge_enabled:
             landmark = landmarks[168]
-            x = int(float(landmark.x * frame_w))
-            y = int(float(landmark.y * frame_h))
+            x = landmark.x * frame_w
+            y = landmark.y * frame_h
             screen_x = screen_w / frame_w * x
             screen_y = screen_h / frame_h * y
             x_low = cal_w_b - x_sens
@@ -83,13 +83,14 @@ while True:
             x_move = map_value(screen_x, (x_low, x_high), (1, screen_w - 1))
             y_move = map_value(screen_y, (y_low, y_high), (1, screen_h - 1))
             pyautogui.moveTo(x_move, y_move)
+            # pyautogui.moveTo(screen_x, screen_y)
 
         """using iris for gaze"""
         if gaze_enabled:
             for iris_id, landmark in enumerate(landmarks[474:478]):
                 x = int(landmark.x * frame_w)
                 y = int(landmark.y * frame_h)
-                cv2.circle(frame, (x, y), 3, (0, 255, 0))
+                # cv2.circle(frame, (x, y), 3, (0, 255, 0))
                 if iris_id == 1:
                     screen_x = screen_w / frame_w * x
                     screen_y = screen_h / frame_h * y
@@ -106,14 +107,14 @@ while True:
         for landmark in left:
             x = int(landmark.x * frame_w)
             y = int(landmark.y * frame_h)
-            cv2.circle(frame, (x, y), 3, (0, 255, 255))
+            # cv2.circle(frame, (x, y), 3, (0, 255, 255))
 
         """right wink"""
         right = [landmarks[374], landmarks[386]]
         for landmark in right:
             x = int(landmark.x * frame_w)
             y = int(landmark.y * frame_h)
-            cv2.circle(frame, (x, y), 3, (0, 255, 255))
+            # cv2.circle(frame, (x, y), 3, (0, 255, 255))
 
         left_dif = left[0].y - left[1].y
         right_dif = right[0].y - right[1].y

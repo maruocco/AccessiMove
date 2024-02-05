@@ -40,7 +40,10 @@ async def gaze_tracking(frame, face_mesh, cal_w_i, cal_h_i, cal_w_b,
         y_high = cal_h_b + y_sens
         x_move = map_value(screen_x, (x_low, x_high), (1, screen_w - 1))
         y_move = map_value(screen_y, (y_low, y_high), (1, screen_h - 1))
-        pyautogui.moveTo(x_move, y_move)
+        try:
+            pyautogui.moveTo(x_move, y_move)
+        except pyautogui.FailSafeException:
+            print("Out of bounds")
 
         # Gaze tracking using iris
         # for iris_id, landmark in enumerate(landmarks[474:478]):

@@ -1,10 +1,12 @@
-# Jack Duggan, Michael Ruocco
-# This program uses Mediapipe and cv2 libraries to capture head and eye gestures from users and convert them into their respective inputs.
+# Jack Duggan, Michael Ruocco This program uses Mediapipe and cv2 libraries to capture head and eye gestures from
+# users and convert them into their respective inputs.
 
 import pyautogui
 import mediapipe as mp  # Import mediapipe
 import cv2  # Import opencv
 import numpy as np
+
+
 # import autopy
 
 def map_value(value, from_range, to_range):
@@ -33,7 +35,7 @@ cal_w_i = 0
 cal_h_i = 0
 cal_w_b = 0
 cal_h_b = 0
-gaze_enabled = False
+gaze_enabled = True
 iris_enabled = False
 bridge_enabled = False
 wink_enabled = False
@@ -76,10 +78,23 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             output = face_mesh.process(rgb_frame)
             landmark_points = output.multi_face_landmarks
 
+            """frame = cv2.resize(frame, (1920, 1080))"""
+
             frame_h, frame_w, _ = frame.shape
 
             if landmark_points:
                 landmarks = landmark_points[0].landmark
+
+                '''
+                for landmark in landmarks[0:467]:
+                    x = int(landmark.x * frame_w)
+                    y = int(landmark.y * frame_h)
+                    cv2.circle(frame, (x, y), 3, (0, 255, 0))
+                for landmark in landmarks[468:478]:
+                    x = int(landmark.x * frame_w)
+                    y = int(landmark.y * frame_h)
+                    cv2.circle(frame, (x, y), 3, (0, 0, 255))
+                '''
 
                 """using nose bridge for gaze"""
                 if bridge_enabled:
@@ -207,7 +222,7 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                     print("Down head tilt is", tilt)
                     pyautogui.press('down')
                 # else:
-                    # print("No head tilt")
+                # print("No head tilt")
 
             except:
                 pass
