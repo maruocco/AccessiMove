@@ -2,6 +2,7 @@ import asyncio
 import pyautogui
 import mediapipe as mp
 import cv2
+import os
 
 screen_w, screen_h = pyautogui.size()
 
@@ -40,7 +41,7 @@ async def gaze_tracking(frame, face_mesh, cal_w_i, cal_h_i, cal_w_b,
         y_high = cal_h_b + y_sens
         x_move = map_value(screen_x, (x_low, x_high), (1, screen_w - 1))
         y_move = map_value(screen_y, (y_low, y_high), (1, screen_h - 1))
-        pyautogui.moveTo(x_move, y_move)
+        #pyautogui.moveTo(x_move, y_move)
 
         # Gaze tracking using iris
         # for iris_id, landmark in enumerate(landmarks[474:478]):
@@ -86,6 +87,8 @@ async def head_tilt_detection(landmarks):
     nose = landmarks[mp.solutions.pose.PoseLandmark.NOSE.value].y
     shoulder = (landmarks[mp.solutions.pose.PoseLandmark.LEFT_SHOULDER.value].y +
                 landmarks[mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER.value].y) / 2
+    
+    flg = True
 
     def calculate_distance(a, b):
         distance = a - b
@@ -101,7 +104,9 @@ async def head_tilt_detection(landmarks):
         pyautogui.press('left')
     elif nod_distance > 0.35:
         # pyautogui.press('up')  # Uncomment if you want to enable up tilt action
-        pass
+        if flg:
+            os.system("C:\\PROGRA~1\\COMMON~1\\MICROS~1\\ink\\tabtip.exe")
+            flg = False
     elif nod_distance < 0.15:
         pyautogui.press('down')
 
@@ -169,7 +174,8 @@ async def main():
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord('q'):
                     break
-
+                
+    os.system('wmic process where name="TabTip.exe" delete')
     cap.release()
     cv2.destroyAllWindows()
 
