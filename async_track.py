@@ -2,6 +2,7 @@ import asyncio
 import pyautogui
 import mediapipe as mp
 import cv2
+import os
 
 screen_w, screen_h = pyautogui.size()
 
@@ -90,6 +91,8 @@ async def head_tilt_detection(landmarks):
     shoulder = (landmarks[mp.solutions.pose.PoseLandmark.LEFT_SHOULDER.value].y +
                 landmarks[mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER.value].y) / 2
 
+    flg = True
+
     def calculate_distance(a, b):
         distance = a - b
         return distance
@@ -104,7 +107,9 @@ async def head_tilt_detection(landmarks):
         pyautogui.press('left')
     elif nod_distance > 0.35:
         # pyautogui.press('up')  # Uncomment if you want to enable up tilt action
-        pass
+        if flg:
+            os.system("C:\\PROGRA~1\\COMMON~1\\MICROS~1\\ink\\tabtip.exe")
+            flg = False
     elif nod_distance < 0.15:
         pyautogui.press('down')
 
@@ -173,6 +178,7 @@ async def main():
                 if key == ord('q'):
                     break
 
+    os.system('wmic process where name="TabTip.exe" delete')
     cap.release()
     cv2.destroyAllWindows()
 
