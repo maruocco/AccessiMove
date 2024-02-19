@@ -1,3 +1,4 @@
+# Michael Ruocco, gaze_tracker.py: This class handles gaze tracking and screen mapping
 import pyautogui
 
 

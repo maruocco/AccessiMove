@@ -1,7 +1,6 @@
-# head_tilt_detector.py
+# Jack Duggan, head_controller.py: This class handles the head gesture recognition and input translation
 import os
 import mediapipe as mp
-
 import pyautogui
 
 
