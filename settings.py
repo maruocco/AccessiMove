@@ -7,6 +7,8 @@ pygame.init()
 
 pygame.display.set_caption("Settings")
 
+
+
 # Screen 
 WIDTH, HEIGHT = 900, 700
 screen = pygame.display.set_mode((WIDTH, HEIGHT)) 
@@ -36,7 +38,7 @@ def main():
 	def printSettings(): 
 		print("\n\n") 
 		# getting the data using "get_input_data" method of the Menu class 
-		settingsData = settings.get_input_data() 
+		settingsData = thresholds.get_input_data() 
 
 		for key in settingsData.keys(): 
 			print(f"{key}\t:\t{settingsData[key]}") 
