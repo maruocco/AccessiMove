@@ -81,6 +81,9 @@ class Calibration:
         self.complete = complete
         pygame.quit()
 
+    def reset(self):
+        self.__init__()
+
     def overlay_circle(self, zone):
         self.zone = zone
 

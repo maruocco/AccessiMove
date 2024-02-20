@@ -4,6 +4,7 @@ import mediapipe as mp
 import cv2
 import time
 import os
+import keyboard
 from gaze_tracker import GazeTracker
 from eye_controller import EyeController
 from head_controller import HeadController
@@ -27,8 +28,6 @@ class MainApplication:
         face_mesh = mp.solutions.face_mesh.FaceMesh(refine_landmarks=True)
         mp_pose = mp.solutions.pose
 
-        left_cal_dif = 0
-        right_cal_dif = 0
         zone = 0
         cal_count = 0
         calibrated = False
@@ -77,19 +76,27 @@ class MainApplication:
                                 calibrated = True
 
                         # Run different functions asynchronously
-                        tasks = [
-                            self.gaze_tracker.gaze_tracking(gaze_landmark, self.eye_controller.stop_gaze_tracking_flag),
-                            self.eye_controller.wink_detection(eye_landmarks),
-                            self.head_controller.detect_head_tilt(gesture_landmarks)
-                        ]
+                        if calibrated:
+                            tasks = [
+                                self.gaze_tracker.gaze_tracking(gaze_landmark, self.eye_controller.stop_gaze_tracking_flag),
+                                self.eye_controller.wink_detection(eye_landmarks),
+                                self.head_controller.detect_head_tilt(gesture_landmarks)
+                            ]
 
-                        await asyncio.gather(*tasks)
+                            await asyncio.gather(*tasks)
 
                     # Display the combined video feed
                     # cv2.imshow('Combined Eye Tilt', frame)
 
                     # Handle key events or any other non-asynchronous tasks
                     key = cv2.waitKey(1) & 0xFF
+                    if keyboard.is_pressed('c'):
+                        zone = 0
+                        cal_count = 0
+                        self.calibration.reset()
+                        calibrated = False
+                    elif keyboard.is_pressed('q'):
+                        break
                     if key == ord('q'):
                         break
 

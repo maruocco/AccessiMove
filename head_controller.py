@@ -1,7 +1,7 @@
 # Jack Duggan, head_controller.py: This class handles the head gesture recognition and input translation
-import os
 import mediapipe as mp
 import pyautogui
+import cv2
 
 
 def calculate_distance(a, b):
@@ -30,10 +30,12 @@ class HeadController:
             pyautogui.press('right')
         elif right_distance < 0.10:
             pyautogui.press('left')
-        elif nod_distance > 0.35:
+        elif nod_distance > 0.05:
             # pyautogui.press('up')  # Uncomment if you want to enable up tilt action
             if self.flg:
-                os.system("C:\\PROGRA~1\\COMMON~1\\MICROS~1\\ink\\tabtip.exe")
+                # os.system("C:\\PROGRA~1\\COMMON~1\\MICROS~1\\ink\\tabtip.exe")
+                # img_x, img_y = pyautogui.locateCenterOnScreen('Images/img.png')
+                # pyautogui.click(img_x, img_y)
                 self.flg = False
         elif nod_distance < 0.15:
             pyautogui.press('down')
