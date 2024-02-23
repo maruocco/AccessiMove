@@ -1,7 +1,8 @@
 # Michael Ruocco, gaze_tracker.py: This class handles gaze tracking and screen mapping
-import pyautogui
+import win32api
 
 
+# Linear interpolation function for mapping bridge coordinates to screen coordinates
 def map_value(value, from_min, from_max, to_min, to_max, center=None):
     if center is not None:
         value -= center
@@ -16,7 +17,7 @@ def map_value(value, from_min, from_max, to_min, to_max, center=None):
 
 class GazeTracker:
     def __init__(self):
-        self.screen_w, self.screen_h = pyautogui.size()
+        self.screen_w, self.screen_h = win32api.GetSystemMetrics(0), win32api.GetSystemMetrics(1)
         self.x_move = self.screen_w / 2
         self.y_move = self.screen_h / 2
         self.to_x_range = (1, self.screen_w - 2)
@@ -45,8 +46,8 @@ class GazeTracker:
         self.screen_ratio_y = self.screen_h / self.frame_h
 
     async def gaze_tracking(self, landmark, gaze_track_flag):
-
         if landmark and not gaze_track_flag:
+
             # Gaze tracking using nose bridge
             x = int(landmark.x * self.frame_w)
             y = int(landmark.y * self.frame_h)
@@ -59,7 +60,7 @@ class GazeTracker:
             self.avg_x = (1 - self.alpha) * self.avg_x + self.alpha * mapped_x
             self.avg_y = (1 - self.alpha) * self.avg_y + self.alpha * mapped_y
 
+            # Setting new cursor position
             self.x_move = int(self.avg_x)
             self.y_move = int(self.avg_y)
-
-            pyautogui.moveTo(self.x_move, self.y_move)
+            win32api.SetCursorPos((self.x_move, self.y_move))

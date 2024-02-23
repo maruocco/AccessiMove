@@ -27,6 +27,10 @@ class Calibration:
         self.right_cal_dif = 0
         self.left_dif_list = []
         self.right_dif_list = []
+        self.nod_up_cal = 0
+        self.nod_down_cal = 0
+        self.tilt_left_cal = 0
+        self.tilt_right_cal = 0
 
     def set_bounds(self, zone, landmark):
         self.zone = zone
@@ -73,6 +77,27 @@ class Calibration:
 
     def get_dif(self):
         return self.left_cal_dif, self.right_cal_dif
+
+    def set_nod_thresh(self, zone, nod_distance):
+        self.zone = zone
+        match self.zone:
+            case 0:
+                self.nod_up_cal += nod_distance
+            case 1:
+                self.nod_up_cal += nod_distance
+            case 2:
+                self.nod_down_cal += nod_distance
+            case 3:
+                self.nod_down_cal += nod_distance
+            case 4:
+                self.nod_up_cal = (self.nod_up_cal / 2)
+                self.nod_down_cal = (self.nod_down_cal / 2)
+                mid_point = (self.nod_up_cal + self.nod_down_cal) / 2
+                self.nod_up_cal = self.nod_up_cal + (self.nod_up_cal - mid_point)
+                self.nod_down_cal = self.nod_down_cal - ((mid_point - self.nod_down_cal) * .5)
+
+    def get_nod_thresh(self):
+        return self.nod_up_cal, self.nod_down_cal
 
     def set_frame_size(self, frame_size):
         self.frame_size = frame_size
