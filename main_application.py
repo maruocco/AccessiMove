@@ -39,11 +39,7 @@ class MainApplication:
                     frame = cv2.cvtColor(cv2.flip(frame, 1), cv2.COLOR_BGR2RGB)
                     frame.flags.writeable = False
                     results = pose.process(frame)
-                    try:
-                        gesture_landmarks = results.pose_landmarks.landmark
-                        self.eye_controller.stop_head_tracking_flag = False
-                    except:
-                        self.eye_controller.stop_head_tracking_flag = True
+                    gesture_landmarks = results.pose_landmarks.landmark
                     output = face_mesh.process(frame)
                     landmark_points = output.multi_face_landmarks
 
@@ -77,6 +73,7 @@ class MainApplication:
                             if zone == 5:
                                 self.gaze_tracker.set_calibration(self.calibration.get_bounds())
                                 self.eye_controller.set_cal(self.calibration.get_dif())
+                                print(self.calibration.get_nod_thresh())
                                 self.head_controller.set_nod_cal(*self.calibration.get_nod_thresh())
                                 self.calibration.set_complete(True)
                                 calibrated = True

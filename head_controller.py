@@ -38,23 +38,24 @@ class HeadController:
         self.left_distance = calculate_distance(left_shoulder, left_mouth)
         self.right_distance = calculate_distance(right_mouth, right_shoulder)
         self.nod_distance = calculate_distance(shoulder, nose)
-        if self.nod_distance > self.up_thresh or self.nod_distance < self.down_thresh + .1:
-            print(self.nod_distance)
+        # if self.nod_distance > self.up_thresh or self.nod_distance < self.down_thresh + .1:
+            # print(self.nod_distance)
         if self.left_distance < self.left_thresh and not head_track_flag:
             self.press_arrow_key(0x27)
         elif self.right_distance < self.right_thresh and not head_track_flag:
             self.press_arrow_key(0x25)
         elif self.nod_distance > self.up_thresh:
-            if self.flg:
+            if head_track_flag:
                 try:
                     open_x, open_y = pyautogui.locateCenterOnScreen('Images/keyboard_img.png', grayscale=True, region=(
                         self.corner), confidence=0.6)
                     self.click_move(open_x, open_y)
-                    self.flg = False
                 except:
                     pass
+            else:
+                self.press_arrow_key(0x26)
         elif self.nod_distance < self.down_thresh:
-            if not self.flg:
+            if head_track_flag:
                 try:
                     guide_x, guide_y = pyautogui.locateCenterOnScreen('Images/x_out_guide.png', grayscale=True, region=(
                         self.corner), confidence=0.6)
@@ -64,9 +65,10 @@ class HeadController:
                     close_x, close_y = pyautogui.locateCenterOnScreen('Images/x_out.png', grayscale=True, region=(
                         guide_x, guide_y, x_dist, y_dist), confidence=0.6)
                     self.click_move(close_x, close_y)
-                    self.flg = True
                 except:
                     pass
+            else:
+                self.press_arrow_key(0x28)
         else:
             self.press_performed = False
 
@@ -82,19 +84,18 @@ class HeadController:
         self.press_performed = True
 
     def get_nod_distance(self, landmarks, head_track_flag):
-        if not head_track_flag:
-            left_shoulder = landmarks[mp.solutions.pose.PoseLandmark.LEFT_SHOULDER.value].x
-            right_shoulder = landmarks[mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER.value].x
-            left_mouth = landmarks[mp.solutions.pose.PoseLandmark.MOUTH_LEFT.value].x
-            right_mouth = landmarks[mp.solutions.pose.PoseLandmark.MOUTH_RIGHT.value].x
+        left_shoulder = landmarks[mp.solutions.pose.PoseLandmark.LEFT_SHOULDER.value].x
+        right_shoulder = landmarks[mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER.value].x
+        left_mouth = landmarks[mp.solutions.pose.PoseLandmark.MOUTH_LEFT.value].x
+        right_mouth = landmarks[mp.solutions.pose.PoseLandmark.MOUTH_RIGHT.value].x
 
-            nose = landmarks[mp.solutions.pose.PoseLandmark.NOSE.value].y
-            shoulder = (landmarks[mp.solutions.pose.PoseLandmark.LEFT_SHOULDER.value].y +
-                        landmarks[mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER.value].y) / 2
+        nose = landmarks[mp.solutions.pose.PoseLandmark.NOSE.value].y
+        shoulder = (landmarks[mp.solutions.pose.PoseLandmark.LEFT_SHOULDER.value].y +
+                    landmarks[mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER.value].y) / 2
 
-            self.left_distance = calculate_distance(left_shoulder, left_mouth)
-            self.right_distance = calculate_distance(right_mouth, right_shoulder)
-            self.nod_distance = calculate_distance(shoulder, nose)
+        self.left_distance = calculate_distance(left_shoulder, left_mouth)
+        self.right_distance = calculate_distance(right_mouth, right_shoulder)
+        self.nod_distance = calculate_distance(shoulder, nose)
         return self.nod_distance
 
     def set_nod_cal(self, up_distance, down_distance):

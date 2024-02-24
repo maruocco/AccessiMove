@@ -93,8 +93,8 @@ class Calibration:
                 self.nod_up_cal = (self.nod_up_cal / 2)
                 self.nod_down_cal = (self.nod_down_cal / 2)
                 mid_point = (self.nod_up_cal + self.nod_down_cal) / 2
-                self.nod_up_cal = self.nod_up_cal + (self.nod_up_cal - mid_point)
-                self.nod_down_cal = self.nod_down_cal - ((mid_point - self.nod_down_cal) * .5)
+                self.nod_up_cal = self.nod_up_cal + ((self.nod_up_cal - mid_point) * 1.2)
+                self.nod_down_cal = self.nod_down_cal - ((mid_point - self.nod_down_cal) * .4)
 
     def get_nod_thresh(self):
         return self.nod_up_cal, self.nod_down_cal

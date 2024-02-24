@@ -29,7 +29,7 @@ class GazeTracker:
         self.frame_h, self.frame_w = (1, 1)
         self.screen_ratio_x = self.screen_w / self.frame_w
         self.screen_ratio_y = self.screen_h / self.frame_h
-        self.smooth = 4
+        self.smooth = 8
         self.avg_x = self.x_move
         self.avg_y = self.y_move
         self.alpha = 0.15
