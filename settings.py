@@ -1,4 +1,5 @@
-# Python program to create a basic settings menu using the pygame_menu module 
+#Jack Duggan
+# Customizable gesture mapping and thresholds a basic settings menu 
 
 import pygame 
 import pygame_menu as pm 
@@ -22,15 +23,14 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255) 
 LIGHT_BLUE = (173, 216, 230)
 
-# Main function of the program 
-
-
 def main(): 
 	# List that is displayed while selecting the graphics level 
 	actions = [("Up Arrow Key", "U_ak"), 
 				("Down Arrow Key", "D_ak"), 
 				("Left Arrow Key", "L_ak"), 
-				("Right Arrow Key", "R_ak")] 
+				("Right Arrow Key", "R_ak"),
+				("Open OSK", "O_osk"),
+				("Close OSK", "C_osk")] 
 
 
 	# This function displays the currently selected options 
