@@ -3,6 +3,7 @@ import mediapipe as mp
 import pyautogui
 import win32api
 import win32con
+from settings import Settings
 
 
 def calculate_distance(a, b):
@@ -11,6 +12,7 @@ def calculate_distance(a, b):
 
 class HeadController:
     def __init__(self):
+        self.settings = Settings()
         self.flg = True
         self.screen_width, self.screen_height = pyautogui.size()
         self.corner = (int(self.screen_width / 2), int(self.screen_height / 2), int(self.screen_width / 2) - 1,
@@ -45,6 +47,7 @@ class HeadController:
         elif self.right_distance < self.right_thresh and not head_track_flag:
             self.press_arrow_key(0x25)
         elif self.nod_distance > self.up_thresh:
+            self
             if head_track_flag:
                 try:
                     open_x, open_y = pyautogui.locateCenterOnScreen('Images/keyboard_img.png', grayscale=True, region=(
