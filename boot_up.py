@@ -1,47 +1,37 @@
-# Michael Ruocco
-# This class creates a splash screen when the program boots up and opens the settings menu after x amount of time.
-
+# Michael Ruocco, boot_up.py: Class displays boot up logo when main app is launched
 import tkinter as tk
-from tkinter import PhotoImage
-
-# Create a splash screen window
-splash = tk.Tk()
-splash.title("")
-splash.overrideredirect(True)
-image = PhotoImage(file="Images/splash_screen.png")
-splash.geometry(f"{image.width()}x{image.height()}")
-splash_label = tk.Label(splash, image=image)
-splash_label.pack()
-screen_width = splash.winfo_screenwidth()
-screen_height = splash.winfo_screenheight()
-x = (screen_width - image.width()) // 2
-y = (screen_height - image.height()) // 2
-splash.geometry(f"{image.width()}x{image.height()}+{x}+{y}")
+from PIL import Image, ImageTk
 
 
-# Function to close the splash screen and open the main window
-def open_main_window():
-    # Close splash screen
-    splash.destroy()
+class BootUp:
+    def __init__(self, image_path):
+        self.root = tk.Tk()
+        self.root.overrideredirect(True)  # Create a borderless window
+        self.root.attributes("-transparentcolor", "white")  # Set white color as transparent
+        self.root.attributes("-topmost", True)  # Keep the window on top
 
-    # Create main menu
-    root = tk.Tk()
-    root.title("AccessiMove")
-    window_width = 800
-    window_height = 600
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    x = (screen_width - window_width) // 2
-    y = (screen_height - window_height) // 2
-    root.geometry(f"{window_width}x{window_height}+{x}+{y}")
+        # Center the window on the screen
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        image = Image.open(image_path)
+        image_width, image_height = image.size
+        x = (screen_width - image_width) // 2
+        y = (screen_height - image_height) // 2
+        self.root.geometry("+{}+{}".format(x, y))
 
+        image = Image.open(image_path)
+        photo = ImageTk.PhotoImage(image)
 
-    # Run main menu
-    root.mainloop()
+        label = tk.Label(self.root, image=photo, bg='white')
+        label.photo = photo  # Keep a reference to avoid garbage collection
+        label.pack(expand=True, fill=tk.BOTH)
 
+        self.done_displaying = False
 
-# delay for splash screen
-splash.after(3000, open_main_window())
+    def display_image(self):
+        self.root.after(5000, self.set_done_displaying)
+        self.root.mainloop()
 
-# Run splash screen
-splash.mainloop()
+    def set_done_displaying(self):
+        self.done_displaying = True
+        self.root.destroy()
