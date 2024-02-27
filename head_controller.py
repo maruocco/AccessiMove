@@ -12,7 +12,6 @@ def calculate_distance(a, b):
 
 class HeadController:
     def __init__(self):
-        self.settings = Settings()
         self.flg = True
         self.screen_width, self.screen_height = pyautogui.size()
         self.corner = (int(self.screen_width / 2), int(self.screen_height / 2), int(self.screen_width / 2) - 1,
@@ -20,12 +19,13 @@ class HeadController:
         self.prev_x, self.prev_y = pyautogui.position()
         self.up_thresh = 1
         self.down_thresh = 0
-        self.left_thresh = 0.10
-        self.right_thresh = 0.10
+        self.left_thresh = 0.14
+        self.right_thresh = 0.14
         self.nod_distance = 0
         self.left_distance = 0
         self.right_distance = 0
         self.press_performed = False
+        
 
     async def detect_head_tilt(self, landmarks, head_track_flag):
         left_shoulder = landmarks[mp.solutions.pose.PoseLandmark.LEFT_SHOULDER.value].x
@@ -46,8 +46,9 @@ class HeadController:
             self.press_arrow_key(0x27)
         elif self.right_distance < self.right_thresh and not head_track_flag:
             self.press_arrow_key(0x25)
+            Settings.Settings()
+            print("Settings")
         elif self.nod_distance > self.up_thresh:
-            self
             if head_track_flag:
                 try:
                     open_x, open_y = pyautogui.locateCenterOnScreen('Images/keyboard_img.png', grayscale=True, region=(
