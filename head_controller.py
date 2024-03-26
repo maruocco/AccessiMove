@@ -32,10 +32,11 @@ class HeadController:
                 for line in file:
                     key, value = line.strip().split('=')
                     thresholds[key.strip()] = float(value.strip())
-            self.left_thresh = thresholds.get("left_thresh", 0.14)
-            self.right_thresh = thresholds.get("right_thresh", 0.14)
-            self.up_thresh = thresholds.get("up_thresh", 0.0)
-            self.down_thresh = thresholds.get("down_thresh", 0.0)
+            self.left_thresh = thresholds.get("leftTiltThreshold", 0.14)
+            self.right_thresh = thresholds.get("rightTiltThreshold", 0.14)
+            self.up_thresh = thresholds.get("upTiltThreshold", 0.0)
+            self.down_thresh = thresholds.get("downTiltThreshold", 0.0)
+            print("Thresholds loaded successfully:", self.left_thresh, self.right_thresh, self.up_thresh, self.down_thresh)
         except FileNotFoundError:
             print("Error: thresholds.txt file not found.")
         except ValueError:
