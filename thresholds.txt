@@ -1,4 +1,4 @@
-upTiltThreshold=0
-downTiltThreshold=0
-leftTiltThreshold=14
-rightTiltThreshold=14
+upTiltThreshold=13.9
+downTiltThreshold=12.5
+leftTiltThreshold=11.5
+rightTiltThreshold=11.1
