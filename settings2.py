@@ -146,7 +146,7 @@ class SettingsMenu:
         self.screen = pygame.display.set_mode((900, 700))
         self.main()
 
-#if __name__ == "__main__":
-    #settings_menu = SettingsMenu()
-    #settings_menu.main()
+if __name__ == "__main__":
+    settings_menu = SettingsMenu()
+    settings_menu.main()
 

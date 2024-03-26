@@ -21,6 +21,7 @@ class MainApplication:
         self.head_controller = HeadController(self.settings_menu, thresholds)
         self.calibration = Calibration()
         self.settings_menu = settings_menu
+        self.press_performed = False
 
     async def main(self):
 

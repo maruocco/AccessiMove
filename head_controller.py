@@ -21,6 +21,10 @@ class HeadController:
         self.settings_menu = settings_menu
         self.thresholds = thresholds
         self.load_threshold_values()
+        self.nod_distance = 0
+        self.left_distance = 0
+        self.right_distance = 0
+        self.press_performed = False
 
     def load_threshold_values(self):
         # Read threshold values from the file
@@ -34,29 +38,16 @@ class HeadController:
         self.down_thresh = threshold_values.get("down_threshold")
         self.left_thresh = threshold_values.get("left_threshold")
         self.right_thresh = threshold_values.get("right_threshold")
-
-        self.nod_distance = 0
-        self.left_distance = 0
-        self.right_distance = 0
-        self.press_performed = False
         
 
-    def load_threshold_values(self):
+    """def load_threshold_values(self):
         file_path = "thresholds.txt"
         thresholds = self.settings_menu.load_threshold_values(file_path)
         self.up_thresh = thresholds.get("upTiltThreshold", 60) / 100  # Divide by 100 to convert to decimal
         self.down_thresh = thresholds.get("downTiltThreshold", 60) / 100
         self.left_thresh = thresholds.get("leftTiltThreshold", 60) / 100
         self.right_thresh = thresholds.get("rightTiltThreshold", 60) / 100
-        
-
-    def load_threshold_values(self):
-        file_path = "thresholds.txt"
-        thresholds = self.settings_menu.load_threshold_values(file_path)
-        self.up_thresh = thresholds.get("upTiltThreshold")
-        self.down_thresh = thresholds.get("downTiltThreshold")
-        self.left_thresh = thresholds.get("leftTiltThreshold")
-        self.right_thresh = thresholds.get("rightTiltThreshold")
+        """
         
 
     async def detect_head_tilt(self, landmarks, head_track_flag):
@@ -112,11 +103,11 @@ class HeadController:
         pyautogui.click(x, y)
         win32api.SetCursorPos((self.prev_x, self.prev_y))
 
-    def press_arrow_key(self, key):
-        if not self.press_performed:
-            win32api.keybd_event(key, 0, 0, 0)
-            win32api.keybd_event(key, 0, win32con.KEYEVENTF_KEYUP, 0)
-        self.press_performed = True
+    #def press_arrow_key(self, key):
+        #if not self.press_performed:
+            #win32api.keybd_event(key, 0, 0, 0)
+            #win32api.keybd_event(key, 0, win32con.KEYEVENTF_KEYUP, 0)
+        #self.press_performed = True
 
     def get_nod_distance(self, landmarks, head_track_flag):
         left_shoulder = landmarks[mp.solutions.pose.PoseLandmark.LEFT_SHOULDER.value].x
