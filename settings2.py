@@ -44,19 +44,19 @@ class SettingsMenu:
         thresholds._theme.widget_alignment = pm.locals.ALIGN_LEFT
 
         # Range slider that lets to choose a value using a slider
-        thresholds.add.range_slider(title="Up tilt Threshold", default=60, range_values=(50, 100), increment=1,
+        thresholds.add.range_slider(title="Up tilt Threshold", default=10, range_values=(5, 20), increment=1,
                                     value_format=lambda x: str(int(x)), rangeslider_id="upThreshold")
         thresholds.add.label(title="")
 
-        thresholds.add.range_slider(title="Down tilt Threshold", default=60, range_values=(50, 100), increment=1,
+        thresholds.add.range_slider(title="Down tilt Threshold", default=10, range_values=(5, 20), increment=1,
                                     value_format=lambda x: str(int(x)), rangeslider_id="downThreshold")
         thresholds.add.label(title="")
 
-        thresholds.add.range_slider(title="Left tilt Threshold", default=60, range_values=(50, 100), increment=1,
+        thresholds.add.range_slider(title="Left tilt Threshold", default=10, range_values=(5, 20), increment=1,
                                     value_format=lambda x: str(int(x)), rangeslider_id="leftThreshold")
         thresholds.add.label(title="")
 
-        thresholds.add.range_slider(title="Right tilt Threshold", default=60, range_values=(50, 100), increment=1,
+        thresholds.add.range_slider(title="Right tilt Threshold", default=10, range_values=(5, 20), increment=1,
                                     value_format=lambda x: str(int(x)), rangeslider_id="rightThreshold")
         thresholds.add.label(title="")
 
@@ -139,6 +139,12 @@ class SettingsMenu:
                 key, value = line.strip().split('=')
                 threshold_values[key.strip()] = float(value.strip())
         return threshold_values
+    
+    def show_menu(self):
+        # Display the settings menu
+        pygame.init()
+        self.screen = pygame.display.set_mode((900, 700))
+        self.main()
 
 #if __name__ == "__main__":
     #settings_menu = SettingsMenu()

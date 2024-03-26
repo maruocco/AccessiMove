@@ -13,12 +13,14 @@ from settings2 import SettingsMenu
 
 
 class MainApplication:
-    def __init__(self):
+    def __init__(self,settings_menu):
         self.gaze_tracker = GazeTracker()
         self.eye_controller = EyeController()
-        self.settings_menu = SettingsMenu()  # Initialize SettingsMenu without displaying it
-        self.head_controller = HeadController()  # Initialize HeadController without passing any arguments
+        self.settings_menu = SettingsMenu()
+        thresholds = self.settings_menu.load_threshold_values("thresholds.txt")
+        self.head_controller = HeadController(self.settings_menu, thresholds)
         self.calibration = Calibration()
+        self.settings_menu = settings_menu
 
     async def main(self):
 
@@ -112,5 +114,6 @@ class MainApplication:
 
 
 if __name__ == "__main__":
-    app = MainApplication()
+    settings_menu = SettingsMenu()
+    app = MainApplication(settings_menu)
     asyncio.run(app.main())

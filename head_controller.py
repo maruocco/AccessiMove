@@ -6,25 +6,40 @@ import win32con
 from settings2 import SettingsMenu
 
 
+
 def calculate_distance(a, b):
     return a - b
 
 
 class HeadController:
-    def __init__(self, thresholds=None, settings_menu=None, settings_menu_path=None):
+    def __init__(self, settings_menu, thresholds):
         self.flg = True
         self.screen_width, self.screen_height = pyautogui.size()
         self.corner = (int(self.screen_width / 2), int(self.screen_height / 2), int(self.screen_width / 2) - 1,
                        int(self.screen_height / 2) - 1)
         self.prev_x, self.prev_y = pyautogui.position()
-        self.thresholds = thresholds if thresholds is not None else {}
-        self.settings_menu = settings_menu  # Assuming you might need this for future use
-        self.settings_menu_path = settings_menu_path  # Assuming you might need this for future use
+        self.settings_menu = settings_menu
+        self.thresholds = thresholds
+        self.load_threshold_values()
+
+    def load_threshold_values(self):
+        # Read threshold values from the file
+        threshold_values = {}
+        with open("thresholds.txt", 'r') as file:
+            for line in file:
+                key, value = line.strip().split('=')
+                threshold_values[key.strip()] = float(value.strip())  # Convert values to float
+        # Assign threshold values to corresponding attributes
+        self.up_thesh = threshold_values.get("up_threshold")
+        self.down_thresh = threshold_values.get("down_threshold")
+        self.left_thresh = threshold_values.get("left_threshold")
+        self.right_thresh = threshold_values.get("right_threshold")
 
         self.nod_distance = 0
         self.left_distance = 0
         self.right_distance = 0
         self.press_performed = False
+        
 
     def load_threshold_values(self):
         file_path = "thresholds.txt"
@@ -33,6 +48,15 @@ class HeadController:
         self.down_thresh = thresholds.get("downTiltThreshold", 60) / 100
         self.left_thresh = thresholds.get("leftTiltThreshold", 60) / 100
         self.right_thresh = thresholds.get("rightTiltThreshold", 60) / 100
+        
+
+    def load_threshold_values(self):
+        file_path = "thresholds.txt"
+        thresholds = self.settings_menu.load_threshold_values(file_path)
+        self.up_thresh = thresholds.get("upTiltThreshold")
+        self.down_thresh = thresholds.get("downTiltThreshold")
+        self.left_thresh = thresholds.get("leftTiltThreshold")
+        self.right_thresh = thresholds.get("rightTiltThreshold")
         
 
     async def detect_head_tilt(self, landmarks, head_track_flag):
@@ -54,6 +78,7 @@ class HeadController:
             self.press_arrow_key(0x27)
         elif self.right_distance < self.right_thresh and not head_track_flag:
             self.press_arrow_key(0x25)
+            self.settings_menu.show_menu()
         elif self.nod_distance > self.up_thresh:
             if head_track_flag:
                 try:
