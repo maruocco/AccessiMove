@@ -9,13 +9,15 @@ from eye_controller import EyeController
 from head_controller import HeadController
 from calibration import Calibration
 from boot_up import BootUp
+from settings2 import SettingsMenu
 
 
 class MainApplication:
     def __init__(self):
         self.gaze_tracker = GazeTracker()
         self.eye_controller = EyeController()
-        self.head_controller = HeadController()
+        self.settings_menu = SettingsMenu()  # Initialize SettingsMenu without displaying it
+        self.head_controller = HeadController()  # Initialize HeadController without passing any arguments
         self.calibration = Calibration()
 
     async def main(self):

@@ -3,6 +3,7 @@ import mediapipe as mp
 import pyautogui
 import win32api
 import win32con
+from settings2 import SettingsMenu
 
 
 def calculate_distance(a, b):
@@ -10,20 +11,29 @@ def calculate_distance(a, b):
 
 
 class HeadController:
-    def __init__(self):
+    def __init__(self, thresholds=None, settings_menu=None, settings_menu_path=None):
         self.flg = True
         self.screen_width, self.screen_height = pyautogui.size()
         self.corner = (int(self.screen_width / 2), int(self.screen_height / 2), int(self.screen_width / 2) - 1,
                        int(self.screen_height / 2) - 1)
         self.prev_x, self.prev_y = pyautogui.position()
-        self.up_thresh = 1
-        self.down_thresh = 0
-        self.left_thresh = 0.10
-        self.right_thresh = 0.10
+        self.thresholds = thresholds if thresholds is not None else {}
+        self.settings_menu = settings_menu  # Assuming you might need this for future use
+        self.settings_menu_path = settings_menu_path  # Assuming you might need this for future use
+
         self.nod_distance = 0
         self.left_distance = 0
         self.right_distance = 0
         self.press_performed = False
+
+    def load_threshold_values(self):
+        file_path = "thresholds.txt"
+        thresholds = self.settings_menu.load_threshold_values(file_path)
+        self.up_thresh = thresholds.get("upTiltThreshold", 60) / 100  # Divide by 100 to convert to decimal
+        self.down_thresh = thresholds.get("downTiltThreshold", 60) / 100
+        self.left_thresh = thresholds.get("leftTiltThreshold", 60) / 100
+        self.right_thresh = thresholds.get("rightTiltThreshold", 60) / 100
+        
 
     async def detect_head_tilt(self, landmarks, head_track_flag):
         left_shoulder = landmarks[mp.solutions.pose.PoseLandmark.LEFT_SHOULDER.value].x

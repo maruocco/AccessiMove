@@ -1,0 +1,4 @@
+upTiltThreshold=77.99999999999999
+downTiltThreshold=66.0
+leftTiltThreshold=84.66666666666667
+rightTiltThreshold=76.0
